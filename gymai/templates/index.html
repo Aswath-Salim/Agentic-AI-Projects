@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Gym Coach</title>
+
+    <!-- CSS LINK (VERY IMPORTANT) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app">
+    <h1>💪 AI Gym Coach</h1>
+    <p class="subtitle">Personalized • Safe • Sustainable</p>
+
+    <div id="chat">
+        <!-- INTRO MESSAGE -->
+        <div class="msg bot">
+            👋 Hi! I’m your AI Gym Coach.<br><br>
+            I’ll ask you a few questions and then create a
+            <b>personalized workout, diet, and lifestyle plan</b> for you.<br><br>
+            Let’s start — what’s your main fitness goal?
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input id="input" placeholder="Type your answer..." />
+        <button onclick="send()">➤</button>
+    </div>
+</div>
+
+<!-- JS LINK (VERY IMPORTANT) -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
