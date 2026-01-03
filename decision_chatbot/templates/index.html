@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Decision Expert AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Live animated background -->
+<canvas id="bg"></canvas>
+
+<div class="app">
+    <div class="header">
+        <h1>Decision Expert AI</h1>
+        <span>AI Decision Consultant</span>
+    </div>
+
+    <div id="chat" class="chat">
+        <div class="bot message fade-in">
+            👋 Tell me the decision you’re thinking about.
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input id="input" placeholder="e.g. I want to build a house" />
+        <button onclick="send()">➤</button>
+    </div>
+</div>
+
+<script>
+/* -------- ENTER TO SEND -------- */
+const input = document.getElementById("input");
+input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        send();
+    }
+});
+
+/* -------- CHAT LOGIC -------- */
+function send() {
+    const chat = document.getElementById("chat");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const user = document.createElement("div");
+    user.className = "user message fade-in";
+    user.innerText = msg;
+    chat.appendChild(user);
+    input.value = "";
+
+    const typing = document.createElement("div");
+    typing.className = "bot message typing";
+    typing.innerHTML = "<span></span><span></span><span></span>";
+    chat.appendChild(typing);
+    chat.scrollTop = chat.scrollHeight;
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: msg })
+    })
+    .then(res => res.json())
+    .then(data => {
+        typing.remove();
+        const bot = document.createElement("div");
+        bot.className = "bot message fade-in";
+        bot.innerText = data.reply;
+        chat.appendChild(bot);
+        chat.scrollTop = chat.scrollHeight;
+    });
+}
+
+/* -------- LIVE PARTICLE BACKGROUND -------- */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = Array.from({length: 80}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1,
+    dx: (Math.random() - 0.5) * 0.4,
+    dy: (Math.random() - 0.5) * 0.4
+}));
+
+function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#22d3ee";
+    particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+
+window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+};
+</script>
+
+</body>
+</html>
